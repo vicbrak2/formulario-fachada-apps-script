@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solicitud de sitio web</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #171717;
+      --muted: #5c6370;
+      --line: #d9dde3;
+      --paper: #ffffff;
+      --page: #f5f7f9;
+      --accent: #0f766e;
+      --accent-dark: #115e59;
+      --error: #b42318;
+      --success: #027a48;
+      --focus: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .hero {
+      min-height: 58vh;
+      display: grid;
+      align-items: end;
+      background:
+        linear-gradient(180deg, rgba(10, 20, 24, 0.25), rgba(10, 20, 24, 0.76)),
+        url("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Workspace_%28Unsplash%29.jpg/1280px-Workspace_%28Unsplash%29.jpg") center / cover;
+      color: #ffffff;
+      padding: 56px 20px 44px;
+    }
+
+    .hero__logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    /* El logo va a la derecha del texto hero, alineado al final */
+    .hero__inner {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .hero__text {
+      flex: 1;
+    }
+
+
+    /* Estado de éxito del formulario */
+    .form-exito {
+      display: none;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 40px 28px;
+      box-shadow: 0 18px 42px rgba(28, 36, 44, 0.08);
+      text-align: center;
+    }
+
+    .form-exito.is-visible {
+      display: block;
+    }
+
+    .form-exito__icono {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #dcfce7;
+      margin-bottom: 20px;
+    }
+
+    .form-exito__icono svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--success);
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .form-exito h3 {
+      margin: 0 0 10px;
+      font-size: 1.3rem;
+      color: var(--ink);
+    }
+
+    .form-exito p {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.97rem;
+      max-width: 360px;
+      margin-inline: auto;
+    }
+
+    .form-exito .plazo-aviso {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 8px 16px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      color: var(--success);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .hero__inner,
+    .form-shell,
+    .footer {
+      width: min(1120px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    .hero h1 {
+      max-width: 760px;
+      margin: 0 0 16px;
+      font-size: clamp(2rem, 2.9rem, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 0;
+      font-size: 1.08rem;
+      color: #edf7f6;
+    }
+
+    .form-shell {
+      padding: 44px 0 64px;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1.1fr);
+      gap: 36px;
+      align-items: start;
+    }
+
+    .intro h2 {
+      margin: 0 0 12px;
+      font-size: 1.7rem;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .intro p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    form {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      box-shadow: 0 18px 42px rgba(28, 36, 44, 0.08);
+    }
+
+    fieldset {
+      margin: 0 0 28px;
+      padding: 0;
+      border: 0;
+    }
+
+    fieldset:last-of-type {
+      margin-bottom: 18px;
+    }
+
+    legend {
+      width: 100%;
+      margin: 0 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+      font-size: 1.04rem;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label,
+    .field-label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
+    .hint {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #b9c0ca;
+      border-radius: 6px;
+      padding: 11px 12px;
+      color: var(--ink);
+      background: #ffffff;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 112px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    button:focus {
+      outline: 3px solid rgba(37, 99, 235, 0.28);
+      outline-offset: 2px;
+      border-color: var(--focus);
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfd;
+      font-weight: 400;
+    }
+
+    .choice input {
+      flex: 0 0 auto;
+      margin-top: 4px;
+    }
+
+    .conditional {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .conditional.is-visible {
+      display: block;
+    }
+
+    /* Pasos explicativos */
+    .intro-pasos {
+      list-style: none;
+      margin: 20px 0 16px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .intro-pasos li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.97rem;
+      color: var(--ink);
+    }
+
+    .paso-num {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .intro-nota {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+      background: #f0f4f8;
+      border-left: 3px solid var(--line);
+      padding: 8px 12px;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* Asterisco obligatorio */
+    label .req,
+    .field-label .req {
+      color: #c0392b;
+      font-size: 1.1em;
+      font-weight: 800;
+      margin-left: 2px;
+    }
+
+    /* Validación inline */
+    .field-error-msg {
+      display: none;
+      margin: 6px 0 0;
+      color: #c0392b;
+      font-size: 0.93rem;
+      font-weight: 700;
+    }
+
+    .field--invalid input,
+    .field--invalid textarea {
+      border-color: var(--error);
+      background: #fff8f8;
+    }
+
+    .field--invalid input:focus,
+    .field--invalid textarea:focus {
+      outline-color: rgba(180, 35, 24, 0.25);
+      border-color: var(--error);
+    }
+
+    .field--invalid .field-error-msg {
+      display: block;
+    }
+
+    .field--valid input,
+    .field--valid textarea {
+      border-color: #6ee7b7;
+      background: #f0fdf4;
+    }
+
+    .honeypot {
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 6px;
+      padding: 12px 20px;
+      color: #ffffff;
+      background: var(--accent);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.7;
+    }
+
+    .feedback {
+      min-height: 24px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .feedback-exito {
+      color: var(--success);
+    }
+
+    .feedback-error {
+      color: var(--error);
+    }
+
+    .footer {
+      padding: 0 0 34px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 820px) {
+      .hero__inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero__logo img {
+        height: 90px;
+      }
+
+      .intro,
+      .choice-grid {
+        grid-template-columns: 1fr;
+      }
+
+      form {
+        padding: 22px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .hero {
+        min-height: 64vh;
+        padding: 44px 16px 34px;
+      }
+
+      .hero__inner,
+      .form-shell,
+      .footer {
+        width: min(100% - 28px, 1120px);
+      }
+
+      form {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__inner">
+      <div class="hero__logo">
+        <img src="logo.png" alt="Onyx Web Design" height="130">
+      </div>
+      <div class="hero__text">
+        <h1>Cuéntanos qué sitio web necesita tu negocio</h1>
+        <p>Completa esta solicitud inicial y revisaremos alcance, estilo, materiales disponibles y próximos pasos.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="form-shell">
+    <div class="intro">
+      <section aria-labelledby="intro-title">
+        <h2 id="intro-title">¿Cómo funciona?</h2>
+        <p>Completa este formulario con los datos de tu negocio. <strong>No necesitas saber de tecnología</strong> — solo cuéntanos qué necesitas con tus propias palabras.</p>
+
+        <ul class="intro-pasos">
+          <li>
+            <span class="paso-num">1</span>
+            <span>Rellena los campos con la información de tu negocio.</span>
+          </li>
+          <li>
+            <span class="paso-num">2</span>
+            <span>Presiona <strong>Enviar solicitud</strong> al final del formulario.</span>
+          </li>
+          <li>
+            <span class="paso-num">3</span>
+            <span>Te respondemos por email en un máximo de <strong>72 horas hábiles</strong> con una propuesta y próximos pasos.</span>
+          </li>
+        </ul>
+
+        <p class="intro-nota">Los campos marcados con <span style="color:#c0392b;font-weight:800;">*</span> son obligatorios. El resto puedes dejarlo en blanco si no tienes la información todavía.</p>
+      </section>
+
+      <!-- Panel de confirmación post-envío -->
+      <div class="form-exito" id="formExito" role="alert">
+        <div class="form-exito__icono">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h3>¡Solicitud recibida!</h3>
+        <p>Gracias por completar el formulario. Revisaremos tu solicitud y nos pondremos en contacto contigo a la brevedad.</p>
+        <p>Te escribiremos al correo que ingresaste con los próximos pasos.</p>
+        <span class="plazo-aviso">⏱ Tiempo de respuesta máximo: 72 horas hábiles</span>
+      </div>
+
+      <form id="solicitudWebForm" novalidate>
+        <input class="honeypot" type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+
+        <fieldset>
+          <legend>Datos del negocio</legend>
+
+          <div class="field" id="field-nombreNegocio">
+            <label for="nombreNegocio">Nombre del negocio <span class="req">*</span></label>
+            <input id="nombreNegocio" name="nombreNegocio" type="text" autocomplete="organization" required>
+            <p class="field-error-msg">Este campo es obligatorio.</p>
+          </div>
+
+          <div class="field" id="field-dedicacion">
+            <label for="dedicacion">A qué se dedica <span class="req">*</span></label>
+            <textarea id="dedicacion" name="dedicacion" required></textarea>
+            <p class="field-error-msg">Este campo es obligatorio.</p>
+          </div>
+
+          <div class="field" id="field-email">
+            <label for="email">Email de contacto <span class="req">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+            <p class="field-error-msg">Ingresa un email válido (ej: nombre@dominio.com).</p>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Tiene sitio web actualmente</span>
+            <div class="choice-grid">
+              <label class="choice"><input type="radio" name="tieneSitio" value="Si"> Si</label>
+              <label class="choice"><input type="radio" name="tieneSitio" value="No"> No</label>
+            </div>
+          </div>
+
+          <div class="field" id="enlacesField">
+            <label for="enlaces">Enlaces actuales o redes sociales</label>
+            <textarea id="enlaces" name="enlaces" placeholder="Sitio web, Instagram, Facebook, LinkedIn u otros enlaces relevantes"></textarea>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Objetivos del sitio</legend>
+
+          <div class="field">
+            <span class="field-label">Qué quieres lograr</span>
+            <div class="choice-grid">
+              <label class="choice"><input type="checkbox" name="objetivos" value="Mostrar servicios"> Mostrar servicios</label>
+              <label class="choice"><input type="checkbox" name="objetivos" value="Conseguir contactos"> Conseguir contactos</label>
+              <label class="choice"><input type="checkbox" name="objetivos" value="Vender productos"> Vender productos</label>
+              <label class="choice"><input type="checkbox" name="objetivos" value="Agendar reservas"> Agendar reservas</label>
+              <label class="choice"><input type="checkbox" name="objetivos" value="Mejorar presencia profesional"> Mejorar presencia profesional</label>
+              <label class="choice"><input type="checkbox" name="objetivos" value="Otro" id="objetivoOtroCheck"> Otro</label>
+            </div>
+            <div class="conditional" id="objetivoOtroField">
+              <label for="objetivoOtro">Otro objetivo</label>
+              <input id="objetivoOtro" name="objetivoOtro" type="text">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="sitioIdeal">Cómo imaginas tu sitio ideal</label>
+            <textarea id="sitioIdeal" name="sitioIdeal"></textarea>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Estilo y materiales</legend>
+
+          <div class="field">
+            <span class="field-label">Estilo visual preferido</span>
+            <div class="choice-grid">
+              <label class="choice"><input type="radio" name="estilo" value="Moderno y minimalista"> Moderno y minimalista</label>
+              <label class="choice"><input type="radio" name="estilo" value="Corporativo y formal"> Corporativo y formal</label>
+              <label class="choice"><input type="radio" name="estilo" value="Creativo y llamativo"> Creativo y llamativo</label>
+              <label class="choice"><input type="radio" name="estilo" value="Calido y cercano"> Calido y cercano</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="colores">Colores, marca o identidad visual</label>
+            <textarea id="colores" name="colores" placeholder="Colores, logo, tipografias, restricciones de marca"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="referencias">Sitios de referencia</label>
+            <textarea id="referencias" name="referencias" placeholder="Enlaces a sitios que te gusten y por que"></textarea>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Tienes textos, fotos o logo listos</span>
+            <div class="choice-grid">
+              <label class="choice"><input type="radio" name="materiales" value="Si, tengo todo listo"> Si, tengo todo listo</label>
+              <label class="choice"><input type="radio" name="materiales" value="Tengo parte del material"> Tengo parte del material</label>
+              <label class="choice"><input type="radio" name="materiales" value="Necesito ayuda con el contenido"> Necesito ayuda con el contenido</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Presupuesto y plazo</legend>
+
+          <div class="field">
+            <span class="field-label">Presupuesto estimado</span>
+            <div class="choice-grid">
+              <label class="choice"><input type="radio" name="presupuesto" value="Menos de $300.000 CLP"> Menos de $300.000 CLP</label>
+              <label class="choice"><input type="radio" name="presupuesto" value="$300.000 - $600.000 CLP">$300.000 - $600.000 CLP</label>
+              <label class="choice"><input type="radio" name="presupuesto" value="$600.000 - $1.000.000 CLP">$600.000 - $1.000.000 CLP</label>
+              <label class="choice"><input type="radio" name="presupuesto" value="Mas de $1.000.000 CLP"> Mas de $1.000.000 CLP</label>
+              <label class="choice"><input type="radio" name="presupuesto" value="Aun no lo tengo definido"> Aun no lo tengo definido</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Plazo esperado</span>
+            <div class="choice-grid">
+              <label class="choice"><input type="radio" name="plazo" value="Lo antes posible"> Lo antes posible</label>
+              <label class="choice"><input type="radio" name="plazo" value="2 a 4 semanas"> 2 a 4 semanas</label>
+              <label class="choice"><input type="radio" name="plazo" value="1 a 2 meses"> 1 a 2 meses</label>
+              <label class="choice"><input type="radio" name="plazo" value="Sin urgencia"> Sin urgencia</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button id="submitButton" type="submit">Enviar solicitud</button>
+          <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Imagen: Damian Patkowski, CC0, via Wikimedia Commons.</p>
+  </footer>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDRJlmjpALL_ywy9ryPuxmdpvY081MF_UdTzggg70zJ1YJcz9z38w7KAs0fxwlTAH38g/exec';
+
+    const form = document.getElementById('solicitudWebForm');
+    const feedbackDiv = document.getElementById('feedback');
+    const submitButton = document.getElementById('submitButton');
+    const objetivoOtroCheck = document.getElementById('objetivoOtroCheck');
+    const objetivoOtroField = document.getElementById('objetivoOtroField');
+    const formExito = document.getElementById('formExito');
+
+    objetivoOtroCheck.addEventListener('change', () => {
+      objetivoOtroField.classList.toggle('is-visible', objetivoOtroCheck.checked);
+    });
+
+    // Validación inline por campo
+    function setFieldState(fieldEl, isValid) {
+      fieldEl.classList.toggle('field--invalid', !isValid);
+      fieldEl.classList.toggle('field--valid', isValid);
+    }
+
+    function clearFieldState(fieldEl) {
+      fieldEl.classList.remove('field--invalid', 'field--valid');
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // nombreNegocio — valida al salir del campo (blur) y mientras escribe si ya fue tocado
+    const inputNombre = document.getElementById('nombreNegocio');
+    const fieldNombre = document.getElementById('field-nombreNegocio');
+    inputNombre.addEventListener('blur', () => {
+      if (inputNombre.value.trim() === '') {
+        setFieldState(fieldNombre, false);
+      } else {
+        setFieldState(fieldNombre, true);
+      }
+    });
+    inputNombre.addEventListener('input', () => {
+      if (fieldNombre.classList.contains('field--invalid') || fieldNombre.classList.contains('field--valid')) {
+        setFieldState(fieldNombre, inputNombre.value.trim() !== '');
+      }
+    });
+
+    // dedicacion
+    const textaDedicacion = document.getElementById('dedicacion');
+    const fieldDedicacion = document.getElementById('field-dedicacion');
+    textaDedicacion.addEventListener('blur', () => {
+      setFieldState(fieldDedicacion, textaDedicacion.value.trim() !== '');
+    });
+    textaDedicacion.addEventListener('input', () => {
+      if (fieldDedicacion.classList.contains('field--invalid') || fieldDedicacion.classList.contains('field--valid')) {
+        setFieldState(fieldDedicacion, textaDedicacion.value.trim() !== '');
+      }
+    });
+
+    // email — valida formato en tiempo real después del primer blur
+    const inputEmail = document.getElementById('email');
+    const fieldEmail = document.getElementById('field-email');
+    inputEmail.addEventListener('blur', () => {
+      if (inputEmail.value.trim() === '') {
+        setFieldState(fieldEmail, false);
+      } else {
+        setFieldState(fieldEmail, emailRegex.test(inputEmail.value.trim()));
+      }
+    });
+    inputEmail.addEventListener('input', () => {
+      if (fieldEmail.classList.contains('field--invalid') || fieldEmail.classList.contains('field--valid')) {
+        const val = inputEmail.value.trim();
+        setFieldState(fieldEmail, val !== '' && emailRegex.test(val));
+      }
+    });
+
+    function getRadioValue(name) {
+      return document.querySelector(`input[name="${name}"]:checked`)?.value || '';
+    }
+
+    function construirPayloadJSON() {
+      const payload = {
+        nombreNegocio: document.getElementById('nombreNegocio').value.trim(),
+        dedicacion: document.getElementById('dedicacion').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        tieneSitio: getRadioValue('tieneSitio'),
+        enlaces: document.getElementById('enlaces').value.trim(),
+        objetivos: [],
+        sitioIdeal: document.getElementById('sitioIdeal').value.trim(),
+        estilo: getRadioValue('estilo'),
+        colores: document.getElementById('colores').value.trim(),
+        referencias: document.getElementById('referencias').value.trim(),
+        materiales: getRadioValue('materiales'),
+        presupuesto: getRadioValue('presupuesto'),
+        plazo: getRadioValue('plazo'),
+        website: document.getElementById('website').value.trim()
+      };
+
+      document.querySelectorAll('input[name="objetivos"]:checked').forEach((checkbox) => {
+        if (checkbox.value === 'Otro') {
+          const otroTexto = document.getElementById('objetivoOtro').value.trim();
+          payload.objetivos.push(otroTexto ? `Otro: ${otroTexto}` : 'Otro');
+          return;
+        }
+
+        payload.objetivos.push(checkbox.value);
+      });
+
+      return payload;
+    }
+
+    function validarPayload(payload) {
+      if (!payload.nombreNegocio || !payload.dedicacion || !payload.email) {
+        return 'Completa nombre del negocio, dedicacion y email.';
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+        return 'Ingresa un email valido.';
+      }
+
+      return '';
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      feedbackDiv.textContent = '';
+      feedbackDiv.className = 'feedback';
+
+      const payload = construirPayloadJSON();
+      const validationError = validarPayload(payload);
+
+      if (validationError) {
+        feedbackDiv.textContent = validationError;
+        feedbackDiv.classList.add('feedback-error');
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Enviando...';
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Error desconocido en el servidor');
+        }
+
+        form.style.display = 'none';
+        formExito.classList.add('is-visible');
+        formExito.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        form.reset();
+        objetivoOtroField.classList.remove('is-visible');
+        [fieldNombre, fieldDedicacion, fieldEmail].forEach(f => clearFieldState(f));
+      } catch (error) {
+        console.error('Error:', error);
+        feedbackDiv.textContent = `No se pudo enviar el formulario: ${error.message}`;
+        feedbackDiv.classList.add('feedback-error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Enviar solicitud';
+      }
+    });
+  </script>
+</body>
+</html>

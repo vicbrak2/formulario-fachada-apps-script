@@ -1,0 +1,126 @@
+{
+  "project_context": {
+    "name": "Formulario Web Desacoplado",
+    "type": "modulo_core",
+    "description": "Core funcional de un formulario web desacoplado, diseñado como módulo reutilizable dentro de un sistema mayor.",
+    "components": {
+      "frontend": {
+        "type": "standalone",
+        "stack": ["HTML", "CSS", "JavaScript"],
+        "responsibilities": [
+          "Captura de datos",
+          "Validación básica",
+          "UX/UI"
+        ]
+      },
+      "backend": {
+        "type": "Google Apps Script",
+        "responsibilities": [
+          "Recepción de payload JSON",
+          "Validación server-side",
+          "Persistencia en Google Sheets",
+          "Notificaciones por email"
+        ]
+      },
+      "storage": {
+        "type": "Google Sheets"
+      },
+      "communication": {
+        "protocol": "HTTP",
+        "format": "JSON"
+      }
+    }
+  },
+  "operational_principles": {
+    "token_efficiency": {
+      "critical": true,
+      "rules": [
+        "Responder de forma directa y sin redundancia",
+        "Evitar explicaciones largas innecesarias",
+        "Priorizar outputs accionables",
+        "Reutilizar contexto previo",
+        "No repetir código completo si solo cambian partes"
+      ]
+    },
+    "tool_usage": {
+      "strategy": "Preferir ejecución sobre razonamiento cuando sea posible",
+      "tools": {
+        "chrome_mapping": [
+          "Inspección del DOM",
+          "Debug de eventos JS",
+          "Validación de formularios",
+          "Análisis de requests (Network)"
+        ],
+        "local_clients": [
+          "wp-cli",
+          "mcp",
+          "scripts locales"
+        ],
+        "automation": [
+          "Ejecutar en lugar de explicar cuando sea posible",
+          "Validar resultados directamente"
+        ]
+      }
+    },
+    "decision_criteria": [
+      "Determinar si requiere ejecución o razonamiento",
+      "Usar herramientas si aplica",
+      "Ser preciso en diseño",
+      "Entregar código mínimo funcional"
+    ]
+  },
+  "architecture": {
+    "style": "desacoplada",
+    "layers": {
+      "frontend": [
+        "Captura de datos",
+        "Validación básica",
+        "UX/UI"
+      ],
+      "backend": [
+        "Validación server-side",
+        "Persistencia",
+        "Notificaciones"
+      ],
+      "future": [
+        "API intermedia (BFF)",
+        "Integración con CRM",
+        "Automatizaciones"
+      ]
+    }
+  },
+  "implementation_rules": [
+    "No romper el contrato del payload actual",
+    "Mantener compatibilidad con Google Sheets",
+    "Evitar lógica compleja en frontend",
+    "No acoplar el formulario a un entorno específico",
+    "Diseñar para reutilización"
+  ],
+  "security": {
+    "minimum_requirements": [
+      "Validación de input en cliente y servidor",
+      "Honeypot activo",
+      "No exponer lógica sensible",
+      "Manejo claro de errores",
+      "Sanitización básica"
+    ]
+  },
+  "evolution": {
+    "possible_paths": [
+      "Form engine dinámico (schema-driven)",
+      "Backend desacoplado (Node, Spring, etc.)",
+      "Integración con dashboards",
+      "Automatización (n8n, workflows)",
+      "Soporte multi-tenant"
+    ]
+  },
+  "agent_behavior": {
+    "principles": [
+      "Preciso sobre verboso",
+      "Accionable sobre teórico",
+      "Modular sobre monolítico",
+      "Reutilizable sobre específico"
+    ],
+    "priority_rule": "Si existe una forma más eficiente de resolver usando herramientas o ejecución directa, debe priorizarse sobre la explicación."
+  }
+}
