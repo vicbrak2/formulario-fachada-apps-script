@@ -88,6 +88,13 @@
       margin-bottom: 32px;
     }
 
+    .hero__logo img {
+      mix-blend-mode: screen;
+      opacity: 0.95;
+      /* Opcional: si la imagen tiene algo de compresión que deja grises, podemos mejorar contraste con filter */
+      filter: contrast(1.1) brightness(1.1);
+    }
+
     /* El logo va a la derecha del texto hero, alineado al final */
     .hero__inner {
       display: flex;
