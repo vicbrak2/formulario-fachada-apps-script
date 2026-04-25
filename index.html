@@ -441,8 +441,12 @@
     }
 
     button:disabled {
-      cursor: wait;
+      cursor: not-allowed;
       opacity: 0.7;
+    }
+
+    button.is-submitting:disabled {
+      cursor: wait;
     }
 
     .feedback {
@@ -675,7 +679,7 @@
         </fieldset>
 
         <div class="actions">
-          <button id="submitButton" type="submit">Enviar solicitud</button>
+          <button id="submitButton" type="submit" disabled>Enviar solicitud</button>
           <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
         </div>
       </form>
@@ -695,6 +699,7 @@
     const objetivoOtroCheck = document.getElementById('objetivoOtroCheck');
     const objetivoOtroField = document.getElementById('objetivoOtroField');
     const formExito = document.getElementById('formExito');
+    let isSubmitting = false;
 
     objetivoOtroCheck.addEventListener('change', () => {
       objetivoOtroField.classList.toggle('is-visible', objetivoOtroCheck.checked);
@@ -712,6 +717,18 @@
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+    function requiredFieldsAreValid() {
+      return (
+        inputNombre.value.trim() !== '' &&
+        textaDedicacion.value.trim() !== '' &&
+        emailRegex.test(inputEmail.value.trim())
+      );
+    }
+
+    function updateSubmitButtonState() {
+      submitButton.disabled = isSubmitting || !requiredFieldsAreValid();
+    }
+
     // nombreNegocio — valida al salir del campo (blur) y mientras escribe si ya fue tocado
     const inputNombre = document.getElementById('nombreNegocio');
     const fieldNombre = document.getElementById('field-nombreNegocio');
@@ -726,6 +743,8 @@
       if (fieldNombre.classList.contains('field--invalid') || fieldNombre.classList.contains('field--valid')) {
         setFieldState(fieldNombre, inputNombre.value.trim() !== '');
       }
+
+      updateSubmitButtonState();
     });
 
     // dedicacion
@@ -738,6 +757,8 @@
       if (fieldDedicacion.classList.contains('field--invalid') || fieldDedicacion.classList.contains('field--valid')) {
         setFieldState(fieldDedicacion, textaDedicacion.value.trim() !== '');
       }
+
+      updateSubmitButtonState();
     });
 
     // email — valida formato en tiempo real después del primer blur
@@ -755,6 +776,8 @@
         const val = inputEmail.value.trim();
         setFieldState(fieldEmail, val !== '' && emailRegex.test(val));
       }
+
+      updateSubmitButtonState();
     });
 
     function getRadioValue(name) {
@@ -815,10 +838,13 @@
       if (validationError) {
         feedbackDiv.textContent = validationError;
         feedbackDiv.classList.add('feedback-error');
+        updateSubmitButtonState();
         return;
       }
 
-      submitButton.disabled = true;
+      isSubmitting = true;
+      submitButton.classList.add('is-submitting');
+      updateSubmitButtonState();
       submitButton.textContent = 'Enviando...';
 
       try {
@@ -846,10 +872,14 @@
         feedbackDiv.textContent = `No se pudo enviar el formulario: ${error.message}`;
         feedbackDiv.classList.add('feedback-error');
       } finally {
-        submitButton.disabled = false;
+        isSubmitting = false;
+        submitButton.classList.remove('is-submitting');
+        updateSubmitButtonState();
         submitButton.textContent = 'Enviar solicitud';
       }
     });
+
+    updateSubmitButtonState();
   </script>
 </body>
 </html>
