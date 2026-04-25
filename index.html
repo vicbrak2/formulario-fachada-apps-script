@@ -90,9 +90,11 @@
 
     .hero__logo img {
       mix-blend-mode: screen;
-      opacity: 0.95;
-      /* Opcional: si la imagen tiene algo de compresión que deja grises, podemos mejorar contraste con filter */
-      filter: contrast(1.1) brightness(1.1);
+      opacity: 0.7; /* Más sutil, estilo marca de agua */
+      filter: contrast(1.6) brightness(1.2);
+      /* Máscara radial para desaparecer los bordes rectos */
+      mask-image: radial-gradient(circle at center, black 40%, transparent 72%);
+      -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 72%);
     }
 
     /* El logo va a la derecha del texto hero, alineado al final */
